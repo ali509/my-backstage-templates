@@ -1,0 +1,9 @@
+steps:
+    - id: fetch-base
+      name: Fetching Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton # This tells Backstage to look relative to this YAML file
+        values:
+          name: ${{ parameters.name }}
+          # ... rest of your values
