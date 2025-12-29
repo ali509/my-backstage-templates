@@ -1,9 +1,50 @@
-steps:
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: hello-world-demo
+  title: Hello World Demo
+spec:
+  owner: guest
+  type: service
+  parameters:
+    - title: Fill in details
+      properties:
+        name:
+          type: string
+        owner:
+          type: string
+    - title: Choose location
+      properties:
+        repoUrl:
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts: [github.com]
+
+  steps:
     - id: fetch-base
       name: Fetching Skeleton
       action: fetch:template
       input:
-        url: ./skeleton # This tells Backstage to look relative to this YAML file
+        # Use ./skeleton to look relative to where THIS template.yaml is hosted
+        url: ./skeleton 
         values:
           name: ${{ parameters.name }}
-          # ... rest of your values
+          owner: ${{ parameters.owner }}
+          repoUrl: ${{ parameters.repoUrl }}
+
+    - id: publish
+      name: Publishing to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: This is ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+
+    - id: register
+      name: Registering in Catalog
+      action: catalog:register
+      input:
+        # Crucial: This links the previous 'publish' step to the catalog
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
