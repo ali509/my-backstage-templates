@@ -1,11 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  # The name must be lowercase, numbers, and hyphens only
-  name: ${{ values.name | slugify | dump }}
-  description: "A demo project created from a Scaffolder Template"
+  name: ${{ values.name | dump }}
   annotations:
-    # This automatically links the GitHub Actions tab we set up earlier
     github.com/project-slug: ${{ values.repoUrl | parseRepoUrl | fqdn }}/${{ values.repoUrl | parseRepoUrl | owner }}/${{ values.repoUrl | parseRepoUrl | repo }}
 spec:
   type: service
