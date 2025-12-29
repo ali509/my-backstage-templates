@@ -1,50 +1,53 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: hello-world-demo
-  title: Hello World Demo
+  name: simple-demo-template
+  title: Simple Demo Template
+  description: Creates a repo with a single catalog-info.yaml file.
 spec:
-  owner: guest
+  owner: ali509
   type: service
+
+  # 1. Input Form
   parameters:
-    - title: Fill in details
+    - title: Basic Information
+      required: [name]
       properties:
         name:
+          title: Name
           type: string
-        owner:
-          type: string
-    - title: Choose location
+          description: Unique name for the component
+    - title: Choose Location
+      required: [repoUrl]
       properties:
         repoUrl:
+          title: GitHub Repository Location
           type: string
           ui:field: RepoUrlPicker
           ui:options:
             allowedHosts: [github.com]
 
+  # 2. Actions to take
   steps:
     - id: fetch-base
-      name: Fetching Skeleton
+      name: Fetch Skeleton
       action: fetch:template
       input:
-        # Use ./skeleton to look relative to where THIS template.yaml is hosted
-        url: ./skeleton 
+        url: ./skeleton
         values:
           name: ${{ parameters.name }}
-          owner: ${{ parameters.owner }}
-          repoUrl: ${{ parameters.repoUrl }}
 
     - id: publish
-      name: Publishing to GitHub
+      name: Publish to GitHub
       action: publish:github
       input:
         allowedHosts: ['github.com']
-        description: This is ${{ parameters.name }}
+        description: "Manifest for ${{ parameters.name }}"
         repoUrl: ${{ parameters.repoUrl }}
 
     - id: register
-      name: Registering in Catalog
+      name: Register in Catalog
       action: catalog:register
       input:
-        # Crucial: This links the previous 'publish' step to the catalog
         repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
         catalogInfoPath: '/catalog-info.yaml'
