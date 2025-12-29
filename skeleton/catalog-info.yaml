@@ -2,9 +2,8 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: ${{ values.name | dump }}
-  annotations:
-    github.com/project-slug: ${{ values.repoUrl | parseRepoUrl | fqdn }}/${{ values.repoUrl | parseRepoUrl | owner }}/${{ values.repoUrl | parseRepoUrl | repo }}
+  description: "Created from the Simple Demo Template"
 spec:
   type: service
   lifecycle: experimental
-  owner: ${{ values.owner | dump }}
+  owner: ali509
